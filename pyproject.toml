@@ -1,0 +1,11 @@
+[project]
+name = "course-ml-basic"
+version = "0.1.0"
+description = "ML 기초 교과목 예제 및 실습 코드"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scikit-learn",
+]
