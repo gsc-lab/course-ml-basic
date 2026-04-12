@@ -31,6 +31,10 @@ Thumbs.db
 !data/
 
 
+# 대용량 미디어 (class/animations 제외)
+*.gif
+!class/animations/*.gif
+
 # test 파일
 test/
 
