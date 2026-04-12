@@ -33,3 +33,6 @@ Thumbs.db
 
 # test 파일
 test/
+
+# 슬라이드 이미지/GIF
+class/slides/
