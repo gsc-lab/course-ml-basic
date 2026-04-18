@@ -51,4 +51,3 @@ for epoch in range(1, epochs + 1):
     
 #    정답: H(x) = 0.5x + 2  →  w=0.5, b=2
 print(f"w: {w}, b: {b}")
-        
