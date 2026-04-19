@@ -35,6 +35,9 @@ Thumbs.db
 *.gif
 !class/animations/*.gif
 
+# 애니메이션 생성 스크립트 (로컬 전용)
+class/animations/gen_*.py
+
 # test 파일
 test/
 
