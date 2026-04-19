@@ -21,6 +21,13 @@
 지시사항:
   - TODO 로 표시된 부분을 채워 넣으세요.
   - 각 함수의 docstring을 참고하세요.
+
+생각해보기:
+  1. epoch=10일 때와 epoch=2000일 때 loss 차이가 얼마나 나는가?
+  2. learning_rate=0.0001과 0.01의 결과를 비교해보자.
+     같은 epoch인데 왜 결과가 다른가?
+  3. learning_rate=1.0일 때 어떤 일이 벌어지는가?
+     loss가 줄어드는가, 늘어나는가?
 """
 import random
 
@@ -129,9 +136,9 @@ def experiment_epoch():
 
     힌트: learning_rate는 0.01로 고정하세요.
     """
-    print("=" * 60)
+    print("-" * 10)
     print("실험 1: Epoch의 영향 (learning_rate = 0.01 고정)")
-    print("=" * 60)
+    print("-" * 10)
 
     epoch_list = [10, 100, 500, 2000]
 
@@ -159,9 +166,9 @@ def experiment_learning_rate():
 
     힌트: epochs는 1000으로 고정하세요.
     """
-    print("\n" + "=" * 60)
+    print("\n" + "-" * 10)
     print("실험 2: Learning Rate의 영향 (epochs = 1000 고정)")
-    print("=" * 60)
+    print("-" * 10)
 
     lr_list = [0.0001, 0.01, 0.1, 1.0]
 
@@ -176,11 +183,3 @@ if __name__ == "__main__":
     experiment_epoch()
     experiment_learning_rate()
 
-    print("\n" + "=" * 60)
-    print("생각해보기")
-    print("=" * 60)
-    print("1. epoch=10일 때와 epoch=2000일 때 loss 차이가 얼마나 나는가?")
-    print("2. learning_rate=0.0001과 0.01의 결과를 비교해보자.")
-    print("   같은 epoch인데 왜 결과가 다른가?")
-    print("3. learning_rate=1.0일 때 어떤 일이 벌어지는가?")
-    print("   loss가 줄어드는가, 늘어나는가?")

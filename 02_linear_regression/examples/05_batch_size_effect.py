@@ -28,6 +28,20 @@ Batch Size가 학습에 미치는 영향 - 배달 소요시간 예측
   │  50          │  2회       │  안정적      │  느림       │
   │  100 (BGD)   │  1회       │  매우 안정    │  매우 느림   │
   └──────────────┴───────────┴───────────────┴────────────┘
+
+정리:
+  batch_size가 작을수록 (→ SGD에 가까움)
+    ✓ epoch당 업데이트 횟수가 많다 → 빠르게 움직인다
+    ✗ 소수 샘플만 보고 업데이트 → gradient noise가 크다 (loss 진동)
+
+  batch_size가 클수록 (→ BGD에 가까움)
+    ✓ 많은 샘플의 평균 → gradient가 안정적이다 (loss 매끄러움)
+    ✗ epoch당 업데이트 횟수가 적다 → 수렴이 느려질 수 있다
+
+  실무에서는?
+    - 보통 batch_size = 32, 64, 128을 사용한다
+    - 안정성과 수렴 속도의 균형점을 찾는 것이 핵심이다
+    - GPU 메모리에 맞는 최대 batch_size를 쓰는 것도 중요한 기준이다
 """
 import random
 
@@ -41,9 +55,9 @@ n = 100
 x_data = [random.uniform(0.5, 10.0) for _ in range(n)]
 y_data = [3 * x + 10 + random.gauss(0, 2.5) for x in x_data]
 
-print("=" * 70)
+print("-" * 10)
 print("배달 소요시간 예측 — Batch Size가 학습에 미치는 영향")
-print("=" * 70)
+print("-" * 10)
 print(f"데이터: 배달 {n}건 (거리 0.5~10km, 소요시간 ≈ 3×거리 + 10분)")
 print()
 
@@ -137,16 +151,16 @@ for bs in batch_sizes:
 # ============================================================
 # 4. Loss 변화 비교 (주요 epoch 시점)
 # ============================================================
-print("=" * 70)
+print("-" * 10)
 print("Loss 변화 비교 (주요 epoch 시점)")
-print("=" * 70)
+print("-" * 10)
 
 # 헤더
 header = f"{'Epoch':>8s}"
 for bs, _, _, _ in results:
     header += f"  {'bs=' + str(bs):>10s}"
 print(header)
-print("-" * (8 + 12 * len(results)))
+print("-" * 10)
 
 # 각 epoch 시점별 loss
 for ep in [1, 10, 100, 500, 1000, 2000]:
@@ -162,9 +176,9 @@ for ep in [1, 10, 100, 500, 1000, 2000]:
 #    batch_size가 작을수록 수렴 후에도 진동이 크다.
 # ============================================================
 print()
-print("=" * 70)
+print("-" * 10)
 print("안정성 분석 — 마지막 100 epoch의 loss 진동 폭")
-print("=" * 70)
+print("-" * 10)
 
 for bs, w, b, loss_history in results:
     last = loss_history[-100:]
@@ -188,24 +202,3 @@ for bs, w, b, loss_history in results:
           f"| 진동 폭: {swing:7.4f} {bar}")
 
 
-# ============================================================
-# 6. 결론
-# ============================================================
-print()
-print("=" * 70)
-print("정리")
-print("=" * 70)
-print("""
-  batch_size가 작을수록 (→ SGD에 가까움)
-    ✓ epoch당 업데이트 횟수가 많다 → 빠르게 움직인다
-    ✗ 소수 샘플만 보고 업데이트 → gradient noise가 크다 (loss 진동)
-
-  batch_size가 클수록 (→ BGD에 가까움)
-    ✓ 많은 샘플의 평균 → gradient가 안정적이다 (loss 매끄러움)
-    ✗ epoch당 업데이트 횟수가 적다 → 수렴이 느려질 수 있다
-
-  실무에서는?
-    - 보통 batch_size = 32, 64, 128을 사용한다
-    - 안정성과 수렴 속도의 균형점을 찾는 것이 핵심이다
-    - GPU 메모리에 맞는 최대 batch_size를 쓰는 것도 중요한 기준이다
-""")

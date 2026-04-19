@@ -18,6 +18,17 @@ BGD와 SGD의 장점을 결합한 방식이다.
 
   장점: BGD의 안정성 + SGD의 빈번한 업데이트
        → 실무에서 가장 많이 사용되는 방식이다.
+
+특징 정리:
+  - batch_size개씩 묶어서 평균 기울기 계산 → epoch당 (n/batch_size)번 업데이트
+  - BGD보다 업데이트가 빈번하여 빠르게 수렴
+  - SGD보다 기울기가 안정적 (여러 샘플의 평균)
+  - 실무에서 가장 널리 사용되는 방식 (보통 batch_size = 32, 64, 128)
+
+batch_size에 따른 스펙트럼:
+  batch_size = n (전체) → BGD
+  batch_size = k        → Mini-batch GD
+  batch_size = 1        → SGD
 """
 import random
 
@@ -46,9 +57,9 @@ random.seed(42)
 w = random.random()
 b = random.random()
 
-print("=" * 55)
+print("-" * 10)
 print("Mini-batch Gradient Descent")
-print("=" * 55)
+print("-" * 10)
 print(f"데이터 수: {n}개, batch_size: {batch_size}")
 print(f"epoch당 업데이트 횟수: {n // batch_size}회")
 print(f"초기 w: {w:.4f}, 초기 b: {b:.4f}")
@@ -107,18 +118,7 @@ for epoch in range(1, epochs + 1):
 # 5. 결과
 # ============================================================
 print()
-print("=" * 55)
+print("-" * 10)
 print("학습 완료")
 print(f"  학습된 w: {w:.4f}  (정답: 0.5)")
 print(f"  학습된 b: {b:.4f}  (정답: 2.0)")
-print()
-print("Mini-batch GD 특징 정리:")
-print(f"  - {batch_size}개씩 묶어서 평균 기울기 계산 → epoch당 {n // batch_size}번 업데이트")
-print("  - BGD보다 업데이트가 빈번하여 빠르게 수렴")
-print("  - SGD보다 기울기가 안정적 (여러 샘플의 평균)")
-print("  - 실무에서 가장 널리 사용되는 방식 (보통 batch_size = 32, 64, 128)")
-print()
-print("batch_size에 따른 스펙트럼:")
-print(f"  batch_size = {n} (전체) → BGD")
-print(f"  batch_size = {batch_size}        → Mini-batch GD (현재)")
-print(f"  batch_size = 1        → SGD")

@@ -140,7 +140,7 @@ def print_comparison(results):
     for name, _, _, _ in results:
         print(f" {name:>12s}", end="")
     print(f"   {'정답':>8s}")
-    print("-" * 70)
+    print("-" * 10)
 
     print(f"{'최종 w':18s}", end="")
     for _, w, _, _ in results:
@@ -173,9 +173,9 @@ if __name__ == "__main__":
     mini_lr = 0.001
     sgd_lr = 0.0001
 
-    print("=" * 70)
+    print("-" * 10)
     print("BGD vs Mini-batch GD vs SGD 비교 실험")
-    print("=" * 70)
+    print("-" * 10)
     print(f"데이터 수: {len(x_data)}개, epochs: {epochs}, batch_size: {batch_size}")
     print(f"초기 w: {w_init:.4f}, 초기 b: {b_init:.4f}")
     print(f"learning_rate → BGD: {bgd_lr}, Mini-batch: {mini_lr}, SGD: {sgd_lr}")
@@ -211,9 +211,9 @@ if __name__ == "__main__":
     print()
 
     # --- 비교 ---
-    print("=" * 70)
+    print("-" * 10)
     print("결과 비교")
-    print("=" * 70)
+    print("-" * 10)
     results = [
         ("BGD", w_bgd, b_bgd, loss_bgd),
         ("Mini-batch", w_mini, b_mini, loss_mini),
@@ -228,13 +228,3 @@ if __name__ == "__main__":
     print(f"{'총 업데이트 횟수':18s}", end="")
     print(f" {epochs:12d} {epochs * (n // batch_size):12d} {epochs * n:12d}")
 
-    print()
-    print("=" * 70)
-    print("생각해보기")
-    print("=" * 70)
-    print("1. 세 방식의 loss 감소 속도를 비교해보자. 어느 것이 가장 빠른가?")
-    print("2. SGD의 loss가 울퉁불퉁한 이유는 무엇인가?")
-    print("   Mini-batch는 SGD보다 덜 울퉁불퉁한가?")
-    print("3. batch_size를 2, 10, 20으로 바꿔보자.")
-    print("   batch_size=20이면 어떤 방식과 같아지는가?")
-    print("4. 실무에서 Mini-batch GD가 가장 많이 쓰이는 이유는 무엇일까?")

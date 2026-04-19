@@ -83,7 +83,7 @@ if __name__ == "__main__":
 
     w, b = train(temperatures, beer_consumption, learning_rate, epochs)
 
-    print("\n========== 학습 완료 ==========")
+    print("\n" + "-" * 10)
     print(f"학습된 w: {w:.4f}")
     print(f"학습된 b: {b:.4f}")
     print(f"의미: 기온이 1°C 오르면 맥주 소비량이 약 {w:.2f}리터 증가")

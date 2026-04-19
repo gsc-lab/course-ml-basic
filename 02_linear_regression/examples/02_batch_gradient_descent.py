@@ -13,6 +13,11 @@ Batch Gradient Descent (BGD) - 배치 경사하강법
 
   장점: 전체 데이터를 보고 업데이트하므로 방향이 안정적이다.
   단점: 데이터가 많으면 1번 업데이트에 시간이 오래 걸린다.
+
+특징 정리:
+  - 매 epoch마다 전체 데이터(n개)를 순회한 뒤 1번 업데이트
+  - 기울기가 전체 데이터의 평균이므로 업데이트 방향이 안정적
+  - 데이터가 수만~수백만 개라면 1번 업데이트가 매우 느려진다
 """
 import random
 
@@ -38,9 +43,9 @@ random.seed(42)
 w = random.random()
 b = random.random()
 
-print("=" * 55)
+print("-" * 10)
 print("Batch Gradient Descent (BGD)")
-print("=" * 55)
+print("-" * 10)
 print(f"데이터 수: {n}개")
 print(f"초기 w: {w:.4f}, 초기 b: {b:.4f}")
 print()
@@ -80,12 +85,7 @@ for epoch in range(1, epochs + 1):
 # 5. 결과
 # ============================================================
 print()
-print("=" * 55)
+print("-" * 10)
 print("학습 완료")
 print(f"  학습된 w: {w:.4f}  (정답: 0.5)")
 print(f"  학습된 b: {b:.4f}  (정답: 2.0)")
-print()
-print("BGD 특징 정리:")
-print("  - 매 epoch마다 전체 데이터(20개)를 순회한 뒤 1번 업데이트")
-print("  - 기울기가 전체 데이터의 평균이므로 업데이트 방향이 안정적")
-print("  - 데이터가 수만~수백만 개라면 1번 업데이트가 매우 느려진다")

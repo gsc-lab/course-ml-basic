@@ -18,6 +18,12 @@ BGD와 동일한 데이터·동일한 초기값으로 학습하되,
 BGD와의 비교:
   - BGD: 20개 데이터 → 기울기 평균 → 1번 업데이트  (epoch당 1회)
   - SGD: 20개 데이터 → 1개마다 업데이트            (epoch당 20회)
+
+특징 정리:
+  - 매 샘플마다 즉시 업데이트 → epoch당 n번 업데이트
+  - 업데이트가 빈번하여 빠르게 움직이지만, 방향이 불안정(진동)
+  - 데이터가 수백만 개여도 1개씩 업데이트하므로 메모리 효율적
+  - 매 epoch마다 shuffle하여 학습 순서의 편향을 방지
 """
 import random
 
@@ -45,9 +51,9 @@ random.seed(42)
 w = random.random()
 b = random.random()
 
-print("=" * 55)
+print("-" * 10)
 print("Stochastic Gradient Descent (SGD)")
-print("=" * 55)
+print("-" * 10)
 print(f"데이터 수: {n}개")
 print(f"초기 w: {w:.4f}, 초기 b: {b:.4f}")
 print()
@@ -92,13 +98,7 @@ for epoch in range(1, epochs + 1):
 # 5. 결과
 # ============================================================
 print()
-print("=" * 55)
+print("-" * 10)
 print("학습 완료")
 print(f"  학습된 w: {w:.4f}  (정답: 0.5)")
 print(f"  학습된 b: {b:.4f}  (정답: 2.0)")
-print()
-print("SGD 특징 정리:")
-print("  - 매 샘플마다 즉시 업데이트 → epoch당 20번 업데이트")
-print("  - 업데이트가 빈번하여 빠르게 움직이지만, 방향이 불안정(진동)")
-print("  - 데이터가 수백만 개여도 1개씩 업데이트하므로 메모리 효율적")
-print("  - 매 epoch마다 shuffle하여 학습 순서의 편향을 방지")
