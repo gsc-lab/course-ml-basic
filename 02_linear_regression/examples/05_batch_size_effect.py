@@ -100,8 +100,8 @@ def train_minibatch(x_data, y_data, learning_rate, epochs, batch_size,
 # 3. 다양한 batch_size로 학습 실행
 # ============================================================
 batch_sizes = [1, 4, 16, 50, 100]
-epochs = 200
-learning_rate = 0.001
+epochs = 2000
+learning_rate = 0.003
 
 # 모든 실험에서 동일한 초기값 사용
 random.seed(42)
@@ -135,10 +135,10 @@ for bs in batch_sizes:
 
 
 # ============================================================
-# 4. Loss 변화 비교 (epoch 구간별 평균으로 안정성 확인)
+# 4. Loss 변화 비교 (주요 epoch 시점)
 # ============================================================
 print("=" * 70)
-print("Loss 변화 비교 (매 50 epoch 시점)")
+print("Loss 변화 비교 (주요 epoch 시점)")
 print("=" * 70)
 
 # 헤더
@@ -149,7 +149,7 @@ print(header)
 print("-" * (8 + 12 * len(results)))
 
 # 각 epoch 시점별 loss
-for ep in [1, 10, 50, 100, 150, 200]:
+for ep in [1, 10, 100, 500, 1000, 2000]:
     row = f"{ep:8d}"
     for _, _, _, loss_history in results:
         row += f"  {loss_history[ep - 1]:10.4f}"
@@ -157,23 +157,24 @@ for ep in [1, 10, 50, 100, 150, 200]:
 
 
 # ============================================================
-# 5. Loss 진동 폭 분석 (마지막 50 epoch)
-#    loss가 얼마나 흔들리는지 = 안정성의 지표
+# 5. Loss 진동 폭 분석 (마지막 100 epoch)
+#    모든 방식이 수렴한 뒤, loss가 얼마나 흔들리는지 비교한다.
+#    batch_size가 작을수록 수렴 후에도 진동이 크다.
 # ============================================================
 print()
 print("=" * 70)
-print("안정성 분석 — 마지막 50 epoch의 loss 진동 폭")
+print("안정성 분석 — 마지막 100 epoch의 loss 진동 폭")
 print("=" * 70)
 
 for bs, w, b, loss_history in results:
-    last_50 = loss_history[-50:]
-    avg_loss = sum(last_50) / len(last_50)
-    min_loss = min(last_50)
-    max_loss = max(last_50)
+    last = loss_history[-100:]
+    avg_loss = sum(last) / len(last)
+    min_loss = min(last)
+    max_loss = max(last)
     swing = max_loss - min_loss
 
     # 진동 크기에 따라 시각적 바 표시
-    bar_len = min(int(swing * 2), 40)
+    bar_len = min(int(swing * 3), 40)
     bar = "█" * bar_len if bar_len > 0 else "▏"
 
     label = ""
