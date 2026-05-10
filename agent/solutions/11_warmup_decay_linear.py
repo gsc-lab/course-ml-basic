@@ -1,11 +1,8 @@
-"""
-정답: Linear Warmup + Linear Decay (삼각형 스케줄, YJU 형식)
-============================================================
-"""
+"""정답: Linear Warmup + Linear Decay (삼각형, per-step)"""
 import random
 
 # ============================================================
-# 데이터셋 (20개) - 변경 금지
+# 데이터셋 (변경 금지) -- 정답: H(x) = 0.5x + 2
 # ============================================================
 random.seed(0)
 x_data = [i for i in range(1, 21)]
@@ -13,97 +10,69 @@ y_data = [0.5 * x + 2 + random.uniform(-0.3, 0.3) for x in x_data]
 
 
 # ============================================================
-# Helper: gradient / loss (변경 금지)
+# 하이퍼파라미터 + 파라미터 초기화
 # ============================================================
-def compute_mse_gradient(batch_x, batch_y, w, b):
-    m = len(batch_x)
-    dw = (2.0 / m) * sum((w * x + b - y) * x for x, y in zip(batch_x, batch_y))
-    db = (2.0 / m) * sum(w * x + b - y for x, y in zip(batch_x, batch_y))
-    return dw, db
+n = len(x_data)
+epochs = 500
+batch_size = 4
+base_lr = 0.005
+warmup_steps = 250
+# 학습 전체 길이 = warmup_steps + decay_steps = epochs × (n / batch_size)
+decay_steps = epochs * ((n + batch_size - 1) // batch_size) - warmup_steps
+w, b = 0.0, 0.0
 
-
-def compute_mse_loss(batch_x, batch_y, w, b):
-    m = len(batch_x)
-    return (1.0 / m) * sum((w * x + b - y) ** 2 for x, y in zip(batch_x, batch_y))
-
-
-# ============================================================
-# 학생 TODO 1: 삼각형 스케줄러
-# ============================================================
-def get_triangular_lr(epoch, base_lr, warmup_epochs, total_epochs):
-    if epoch <= warmup_epochs:
-        return base_lr * epoch / warmup_epochs
-    progress = (total_epochs - epoch) / (total_epochs - warmup_epochs)
-    return base_lr * max(progress, 0.0)
+print(f"Linear Warmup + Linear Decay (삼각형, per-step) -- base_lr={base_lr}, "
+      f"epochs={epochs}, batch_size={batch_size}")
+print(f"  warmup_steps={warmup_steps}, decay_steps={decay_steps}\n")
 
 
 # ============================================================
-# 학습 함수 (출제자 영역)
+# 학습 루프
 # ============================================================
-def train(x_data, y_data, base_lr, epochs, batch_size, w_init, b_init,
-          warmup_epochs):
-    w, b = w_init, b_init
-    n = len(x_data)
+random.seed(42)
+global_step = 0
+for epoch in range(1, epochs + 1):
+    indices = list(range(n))
+    random.shuffle(indices)
 
-    for epoch in range(1, epochs + 1):
-        current_lr = get_triangular_lr(epoch, base_lr, warmup_epochs, epochs)
+    loss_sum = 0.0
+    n_batches = 0
 
-        indices = list(range(n))
-        random.shuffle(indices)
+    for start in range(0, n, batch_size):
+        global_step += 1
 
-        epoch_loss_sum = 0.0
-        batch_count = 0
+        # ---- 삼각형 스케줄: 0 → base_lr (warmup) → 0 (decay) ----
+        if global_step < warmup_steps:
+            # Phase 1 — Warmup: 0 → base_lr 선형 증가
+            lr = base_lr * (global_step / warmup_steps)
+        else:
+            # Phase 2 — Linear Decay: base_lr → 0 선형 감소
+            #   step 이 (warmup_steps + decay_steps) 를 초과하면 (1 - …) 가
+            #   음수 → max(0, ..) 로 0 으로 clip (음수 lr 방지)
+            lr = base_lr * max(0.0, 1 - (global_step - warmup_steps) / decay_steps)
 
-        for start in range(0, n, batch_size):
-            batch_idx = indices[start:start + batch_size]
-            batch_x = [x_data[i] for i in batch_idx]
-            batch_y = [y_data[i] for i in batch_idx]
+        # ---- 배치 내 gradient + loss 누적 (MSE) ----
+        batch_indices = indices[start:start + batch_size]
+        m = len(batch_indices)
+        dw, db, batch_loss = 0.0, 0.0, 0.0
+        for i in batch_indices:
+            x, y = x_data[i], y_data[i]
+            error = (w * x + b) - y
+            dw += error * x
+            db += error
+            batch_loss += error ** 2
 
-            dw, db = compute_mse_gradient(batch_x, batch_y, w, b)
-            batch_loss = compute_mse_loss(batch_x, batch_y, w, b)
+        dw = (2.0 / m) * dw
+        db = (2.0 / m) * db
+        w -= lr * dw
+        b -= lr * db
 
-            # 학생 TODO 2: 파라미터 업데이트
-            w = w - current_lr * dw
-            b = b - current_lr * db
+        loss_sum += batch_loss / m
+        n_batches += 1
 
-            epoch_loss_sum += batch_loss
-            batch_count += 1
+    if epoch == 1 or epoch % 100 == 0 or epoch == epochs:
+        print(f"Epoch {epoch:4d} | step {global_step:5d} | "
+              f"lr: {lr:.6f} | Loss: {loss_sum / n_batches:.4f} | "
+              f"w: {w:.2f}, b: {b:.2f}")
 
-        avg_loss = epoch_loss_sum / batch_count
-
-        if (epoch == 1 or epoch == warmup_epochs or
-                epoch % 100 == 0 or epoch == epochs):
-            print(f"Epoch {epoch:4d} | lr: {current_lr:.6f} | "
-                  f"Loss: {avg_loss:.4f} | w: {w:.2f}, b: {b:.2f}")
-
-    return w, b
-
-
-# ============================================================
-# 실행
-# ============================================================
-if __name__ == "__main__":
-    w_init, b_init = 0.0, 0.0
-    base_lr = 0.005
-    epochs = 500
-    batch_size = 4
-    warmup_epochs = 50
-
-    n = len(x_data)
-    print("-" * 10)
-    print("Linear Warmup + Linear Decay (삼각형 스케줄)")
-    print("-" * 10)
-    print(f"base_lr: {base_lr}, epochs: {epochs}, batch_size: {batch_size}")
-    print(f"warmup_epochs: {warmup_epochs}")
-    print(f"  → 1~{warmup_epochs}: 0 ↗ {base_lr}, {warmup_epochs}~{epochs}: {base_lr} ↘ 0")
-    print()
-
-    random.seed(42)
-    w, b = train(
-        x_data, y_data, base_lr, epochs, batch_size, w_init, b_init,
-        warmup_epochs
-    )
-
-    print()
-    print(f"최종 파라미터: w = {w:.2f}, b = {b:.2f}")
-    print(f"정답과 비교: w(정답=0.5), b(정답=2.0)")
+print(f"\n최종 w = {w:.2f}, b = {b:.2f}  (정답 w=0.5, b=2.0)")

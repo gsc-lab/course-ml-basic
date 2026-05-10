@@ -7,32 +7,32 @@ EVAL: script
 DESCRIPTION:
 Mini-batch GD에 Momentum 을 적용하세요.
 
-이 문제는 "Momentum 옵티마이저의 핵심 업데이트 규칙"을 익히는 것이 목적입니다.
+배경:
+  Momentum 은 직전 step 의 gradient 누적(velocity)을 함께 사용해
+  진동을 줄이고 수렴을 빠르게 한다. PyTorch SGD 와 동일하게 매 step
+  (= 매 batch) 마다 velocity 와 파라미터를 갱신한다.
 
-Momentum 이란?
-  매 step 의 gradient 방향이 들쭉날쭉할 때, 직전 step 들의 평균 방향(velocity)
-  을 같이 사용해 더 부드럽고 빠르게 수렴하도록 만드는 기법.
-
-이 문제에서 사용하는 convention (PyTorch SGD 와 동일):
-  v_w ← β · v_w + dw
-  v_b ← β · v_b + db
-  w   ← w - lr · v_w
-  b   ← b - lr · v_b
+수식 (PyTorch SGD convention, per-step):
+  v_w = β * v_w + dw
+  v_b = β * v_b + db
+  w   = w - lr * v_w
+  b   = b - lr * v_b
 
   · β  : momentum 계수 (보통 0.9)
-  · v_w, v_b : 누적 velocity (초기값 0)
+  · v_w, v_b : 누적 velocity (초기값 0, 학습 전체에 걸쳐 유지)
   · dw, db   : 현재 batch 의 평균 gradient
 
 요구 사항:
-  - 아래 데이터셋(x_data, y_data)은 변경하지 마세요.
-  - Mini-batch GD + Momentum 학습 코드를 직접 작성하세요.
-  - 학습 종료 후 최종 (w, b) 와 학습 결과를 출력하세요.
+  - 데이터셋(x_data, y_data) 은 변경하지 마세요.
+  - velocity (vw, vb) 를 학습 시작 전에 0 으로 초기화하고, 매 batch 마다 갱신하세요.
+  - 학습 진행 상황(epoch, loss, w, b, vw, vb) 을 출력하세요.
+
+사용 가능한 도구:
+  · 권장: random.shuffle, random.seed, list slicing, sum/len/range/zip
+  · 금지: sklearn, torch, tensorflow, scipy.optimize.* (학습 알고리즘 우회)
 
 생각해보기:
-  1. β 를 0(=Momentum 없음), 0.5, 0.9, 0.99 로 바꿔보면 수렴 양상이 어떻게 변하나?
-  2. epoch 1 의 vw 값이 음수이고 절댓값이 큰 이유는? (초기 gradient 와 관계)
-  3. 같은 lr 에서 Momentum 이 있으면 더 빠르게 수렴한다. 그러면 lr 을 더 작게
-     써도 되는가, 아니면 더 크게 써도 되는가?
+  - β 를 0(=Momentum 없음), 0.5, 0.9, 0.99 로 바꿔보면 수렴 양상이 어떻게 변하는가?
 """
 # META_TESTS:
 # - stdin: ""
@@ -41,7 +41,7 @@ Momentum 이란?
 import random
 
 # ============================================================
-# 데이터셋 (20개) - 변경 금지
+# 데이터셋 - 변경 금지
 #   정답: H(x) = 0.5x + 2  →  w=0.5, b=2
 # ============================================================
 random.seed(0)
@@ -51,6 +51,4 @@ y_data = [0.5 * x + 2 + random.uniform(-0.3, 0.3) for x in x_data]
 
 # ============================================================
 # 학생 구현 영역
-#   - Mini-batch GD + Momentum 학습 코드를 직접 작성하세요.
-#   - velocity (vw, vb) 초기화부터 파라미터 업데이트까지 직접 구현합니다.
 # ============================================================
