@@ -30,30 +30,32 @@ learning_rate = 0.01
 n = len(x_data)
 
 for epoch in range(2000):
-    # 가설
-    y_pred = []
-    for x in x_data:
-        y_pred.append(w * x + b)
-
-    # 손실
+    w_grad = 0.0
+    b_grad = 0.0
     loss = 0.0
-    for i in range(n):
-        loss += (y_pred[i] - y_data[i]) ** 2
-    loss = loss / n
 
-    # 기울기
-    grad_w = 0.0
-    grad_b = 0.0
-    for i in range(n):
-        error = y_pred[i] - y_data[i]
-        grad_w += error * x_data[i]
-        grad_b += error
-    grad_w = (2 / n) * grad_w
-    grad_b = (2 / n) * grad_b
+    for x, y in zip(x_data, y_data):
+        # 가설: H(x) = w * x + b
+        predict = w * x + b
+
+        # 오차: error = H(x) - y
+        error = predict - y
+
+        # 기울기 누적
+        w_grad += 2 * x * error
+        b_grad += 2 * error
+
+        # 손실 누적
+        loss += error ** 2
+
+    # 평균
+    w_grad /= n
+    b_grad /= n
+    loss /= n
 
     # 업데이트
-    w = w - learning_rate * grad_w
-    b = b - learning_rate * grad_b
+    w = w - learning_rate * w_grad
+    b = b - learning_rate * b_grad
 
 print(f"w = {w:.4f}, b = {b:.4f}")
 
@@ -98,21 +100,19 @@ print("""
 ┌──────────┬──────────────────────┬──────────────────────┐
 │          │ for문 버전           │ numpy 버전           │
 ├──────────┼──────────────────────┼──────────────────────┤
-│ 가설     │ for x in x_data:    │ w * x_np + b         │
-│          │   y_pred.append(    │                      │
-│          │     w * x + b)      │                      │
+│ 가설     │ for x, y in zip(...):│ w * x_np + b         │
+│          │   predict = w*x + b  │                      │
 ├──────────┼──────────────────────┼──────────────────────┤
-│ 손실     │ for i in range(n):  │ np.mean(             │
-│          │   loss += (...)²    │   (y_pred-y_np)**2)  │
-│          │ loss = loss / n     │                      │
+│ 손실     │   loss += error**2   │ np.mean(             │
+│          │ loss /= n            │   (y_pred-y_np)**2)  │
 ├──────────┼──────────────────────┼──────────────────────┤
-│ 기울기   │ for i in range(n):  │ np.sum(error * x_np) │
-│          │   grad_w += ...     │ np.sum(error)        │
-│          │ grad_w = (2/n)*...  │                      │
+│ 기울기   │   w_grad += 2*x*error│ (2/n)*np.sum(        │
+│          │   b_grad += 2*error  │       error * x_np)  │
+│          │ w_grad /= n          │ (2/n)*np.sum(error)  │
 ├──────────┼──────────────────────┼──────────────────────┤
-│ 코드량   │ ~20줄               │ ~6줄                 │
+│ 코드량   │ ~15줄                │ ~6줄                 │
 ├──────────┼──────────────────────┼──────────────────────┤
-│ 속도     │ 느림 (Python 루프)  │ 빠름 (C 내부 연산)   │
+│ 속도     │ 느림 (Python 루프)   │ 빠름 (C 내부 연산)   │
 └──────────┴──────────────────────┴──────────────────────┘
 
 → numpy를 쓰면 코드가 간결해지고, 데이터가 커질수록 속도 차이가 극적으로 벌어진다.
