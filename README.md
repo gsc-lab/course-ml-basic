@@ -8,8 +8,7 @@
 |---|------|------|
 | 01 | NumPy | 배열 생성, 인덱싱, 연산, 브로드캐스팅 |
 | 02 | Linear Regression | 가설, 손실함수, 경사하강법(BGD/SGD/Mini-batch) |
-| 03 | Data Analysis | 산점도·잔차 분석으로 선형성 판단 |
-| 04 | Logistic Regression | (예정) |
+| 03 | Logistic Regression | sigmoid 가설, Binary Cross Entropy, 이진 분류 |
 
 ## 디렉토리 구조
 
@@ -36,7 +35,7 @@ python 02_linear_regression/examples/01_simple_linear_regression.py
 python 02_linear_regression/examples/02_batch_gradient_descent.py
 python 02_linear_regression/examples/03_stochastic_gradient_descent.py
 python 02_linear_regression/examples/04_minibatch_gradient_descent.py
-python 03_data_analysis/exercises/01_is_it_linear.py
+python 03_logistic_regression/examples/01_logistic_regression.py
 ```
 
 ## 요구사항
