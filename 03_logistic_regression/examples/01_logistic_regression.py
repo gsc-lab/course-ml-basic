@@ -65,7 +65,9 @@ for epoch in range(1, epochs + 1):
     b -= lr * grad_b
 
     # 손실 (Binary Cross Entropy)
+    #   ①의 H 는 업데이트 전 w 로 계산한 값이므로, 방금 갱신한 w 의 loss 를 보려면 다시 예측한다.
     if epoch == 1 or epoch % 300 == 0:
+        H = sigmoid(X_train @ w + b)
         loss = -np.mean(y_train * np.log(H) + (1 - y_train) * np.log(1 - H))
         print(f"Epoch {epoch:4d} | Loss: {loss:.4f} | w: {w[0]:.4f}, b: {b:.4f}")
 
