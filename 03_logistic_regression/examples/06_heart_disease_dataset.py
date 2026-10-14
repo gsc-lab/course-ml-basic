@@ -127,8 +127,8 @@ for name in ["age", "serum_cholestoral", "oldpeak", "sex"]:
 #    특성마다 단위가 다르므로 평균 차이의 크기만으로 중요도를 비교할 수도 없다.
 # ============================================================
 print("\n심장병 유무에 따른 일부 특성의 평균:")
-print(f"  {'feature':30s} {'absent(0)':>10s} {'present(1)':>10s}")
 print("  absent(0)=심장병 없음, present(1)=심장병 있음")
+print(f"  {'특성':28s} {'absent(0)':>10s} {'present(1)':>10s}")
 for name in ["maximum_heart_rate_achieved", "exercise_induced_angina",
              "number_of_major_vessels", "oldpeak", "serum_cholestoral"]:
     m0 = X_df.loc[y == 0, name].mean()
